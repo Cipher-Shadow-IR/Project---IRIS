@@ -25,12 +25,17 @@
 ### 🎯 Core Capabilities
 
 🗣️ **Voice Activated Commands**  
-🔗 Opens sites like YouTube, Gmail, GitHub, Drive  
-📁 Access specific folders in Drive  
-🕒 Tells the current time  
-🧮 Performs calculations  
-🌐 Launches *Infinity Compiler Hub*  
-🧠 More power coming soon...
+  - 🧠 Understands your voice in real-time  
+  - 🗣️ Talks back using speech synthesis  
+  - 🔗 Opens common websites like:
+    - YouTube  
+    - Gmail  
+    - GitHub  
+    - Google Drive (including specific folders)
+  - 🕒 Tells you the current time  
+  - ➗ Performs arithmetic calculations via voice  
+  - 🌐 Navigates to **Infinity Compiler Hub**  
+  - 🛠️ And more to come...
 
 ---
 
