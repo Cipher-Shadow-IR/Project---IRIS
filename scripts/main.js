@@ -49,6 +49,14 @@ function handleCommand(command) {
   }
 }
 
+function toggleListening() {
+  if (micWrapper.classList.contains("listening")) {
+    stopListening();
+  } else {
+    startListening();
+  }
+}
+
 function speak(message) {
   const speech = new SpeechSynthesisUtterance();
   speech.text = message;
