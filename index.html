@@ -7,7 +7,14 @@
 <body>
   <h1>I  R  I  S</h1>
   <h2> Your Personal Voice-Assistant </h2>
-  <button onclick="startListening()">🎤 Click to speak</button>
+  <button onclick="startListening()">
+    <div class="mic-wrapper" id="micWrapper">
+      <button id="listenBtn">
+        🎤
+      </button>
+    </div>
+
+  </button>
 
   <p id="output">
     <div id="speechBox">
