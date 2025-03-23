@@ -3,6 +3,7 @@ const output = document.getElementById("output");
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 const recognition = new SpeechRecognition();
 
+speak("Hi! This is your Personal Voice Assistant - IRIS made by Ishaan Ray. How may I help you?")
 recognition.onstart = function() {
   output.textContent = "Listening...";
 };
