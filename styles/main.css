@@ -44,25 +44,71 @@ h1 {
   font-size: 1rem;
 }
 
-/* === Listen Button === */
+/* === MIC Button === */
 #listenBtn {
-  margin-top: 30px;
-  padding: 15px 30px;
-  background-color: transparent;
-  border: 2px solid #00fff7;
-  color: #00fff7;
-  font-size: 1.2rem;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background-color: #00fff7;
+  color: #0f0f0f;
+  border: none;
+  font-size: 2rem;
   cursor: pointer;
-  border-radius: 50px;
-  transition: all 0.3s ease;
-  box-shadow: 0 0 10px #00fff7;
+  z-index: 2;
+  position: relative;
+  box-shadow: 0 0 15px #00fff7, 0 0 30px #00fff7;
+  transition: transform 0.3s ease;
 }
 
 #listenBtn:hover {
-  background-color: #00fff7;
-  color: #0f0f0f;
-  box-shadow: 0 0 20px #00fff7;
+  transform: scale(1.1);
 }
+
+/* === Wrapper for Wavy Pulse === */
+.mic-wrapper {
+  position: relative;
+  display: inline-block;
+  margin-top: 30px;
+}
+
+.mic-wrapper::before,
+.mic-wrapper::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(0, 255, 247, 0.2);
+  z-index: 0;
+  animation: pulseWave 2s infinite ease-in-out;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.mic-wrapper.listening::before {
+  animation-delay: 0s;
+  opacity: 1;
+}
+.mic-wrapper.listening::after {
+  animation-delay: 1s;
+  opacity: 1;
+}
+
+/* === Pulse Animation === */
+@keyframes pulseWave {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.5;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(2.5);
+    opacity: 0;
+  }
+}
+
 
 /* === Typewriter Text Effect === */
 .typewriter {
