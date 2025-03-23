@@ -28,8 +28,16 @@ function handleCommand(command) {
     speak("The time is " + time);
   } else if (command.includes("compiler")) {
     window.open("https://infinitycompilerhub.netlify.app/", "_blank");
-  } else if (command.includes("compiler")) {
-    window.open("https://infinitycompilerhub.netlify.app/", "_blank");
+  } else if (command.includes("github")) {
+      if (command.includes("profile")){
+        window.open("https://github.com/Cipher-Shadow-IR/", "_blank");
+      } else {
+        window.open("https://github.com/", "_blank");
+      }
+  } else if (command.includes("mail")) {
+    window.open("https://mail.google.com/mail/", "_blank");
+  } else if (command.includes("note")) {
+    window.open("https://www.rapidtables.com/tools/notepad.html", "_blank");
   } else {
     speak("Sorry, I didn't get that.");
   }
