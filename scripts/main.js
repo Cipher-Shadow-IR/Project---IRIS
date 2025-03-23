@@ -66,8 +66,7 @@ function speak(message) {
 }
 
 async function fetchAIResponse(prompt) {
-  const response = await fetch("https://iris-ai-backend.username.repl.co/ask", {
- {
+  const response = await fetch("http://localhost:5000/ask", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
