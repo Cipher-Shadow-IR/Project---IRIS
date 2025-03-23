@@ -7,20 +7,16 @@
 <body>
   <h1>I  R  I  S</h1>
   <h2> Your Personal Voice-Assistant </h2>
-  <button onclick="startListening()">
-    <div class="mic-wrapper" id="micWrapper">
-      <button id="listenBtn">
-        🎤
-      </button>
-    </div>
 
-  </button>
+  <div class="mic-wrapper" id="micWrapper">
+    <button id="listenBtn" onclick="startListening()">
+      🎤
+    </button>
+  </div>
+  
+  <div id="speechBox">
+  <p id="output">🎙️ Say something...</p>
 
-  <p id="output">
-    <div id="speechBox">
-    <p id="promptText">🎙️ Say something...</p>
-    </div>
-  </p>
 
 <script src="scripts/main.js"></script>
 </body>
