@@ -16,7 +16,7 @@
 
 ### 🧠 IRIS (Intelligent Response Interface System)
 
-> *She Listens. She Speaks. She Acts.*  
+> *He Listens. He Speaks. He Acts.*  
 > Built for browsers. Coded with purpose.  
 > Designed by: **Cipher-Shadow-IR** 🕶️
 
@@ -37,16 +37,10 @@
 ### 🎨 Aesthetic Goals
 
 > IRIS isn't just smart.  
-> She’s *damn stylish.*
+> He’s *damn stylish.*
 
 UI & UX powered by you.  
 Vibes powered by vision.
-
----
-
-<p align="center">
-  <img src="https://media.giphy.com/media/l0MYKDrmZ0zQeT6Gs/giphy.gif" width="400" />
-</p>
 
 ---
 
