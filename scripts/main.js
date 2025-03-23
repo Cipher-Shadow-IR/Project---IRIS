@@ -45,8 +45,10 @@ function handleCommand(command) {
     speak('Want to make a Note? \n here you go! make sure to save the note lol!');
     window.open("https://www.rapidtables.com/tools/notepad.html", "_blank");
   } else {
-    speak("Sorry, I didn't get that.");
+    speak("Hmm... I didn't get that, but let me think...");
+    fetchAIResponse(command);
   }
+
 }
 
 function toggleListening() {
@@ -62,3 +64,21 @@ function speak(message) {
   speech.text = message;
   window.speechSynthesis.speak(speech);
 }
+
+async function fetchAIResponse(prompt) {
+  const response = await fetch("https://iris-ai-backend.username.repl.co/ask", {
+ {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ message: prompt }),
+  });
+
+  const data = await response.json();
+  const aiMessage = data.reply;
+  output.textContent = "IRIS says: " + aiMessage;
+  speak(aiMessage);
+}
+
+
