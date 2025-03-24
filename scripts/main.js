@@ -80,12 +80,21 @@ function handleCommand(command) {
 }
 
 function toggleListening() {
+  const micWrapper = document.getElementById("micWrapper");
+  const listenBtn = document.getElementById("listenBtn");
+
   if (micWrapper.classList.contains("listening")) {
-    stopListening();
+    recognition.stop(); // Stop the voice recognition
+    micWrapper.classList.remove("listening");
+    listenBtn.textContent = "🎤"; // Set button back to default
+    speak("Stopped listening.");
   } else {
-    startListening();
+    startListening(); // Start voice recognition
+    micWrapper.classList.add("listening");
+    listenBtn.textContent = "🛑 Listening..."; // Change button to show listening state
   }
 }
+
 
 function speak(message) {
   const speech = new SpeechSynthesisUtterance();
