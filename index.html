@@ -9,10 +9,18 @@
   <h2> Your Personal Voice-Assistant </h2>
 
   <div class="mic-wrapper" id="micWrapper">
-    <button id="listenBtn" onclick="toggleListening()">
-      🎤
-    </button>
+    <div class="mic-circle" id="micCircle">
+      <button id="listenBtn" onclick="toggleListening()">
+        🎤
+      </button>
+      <div class="wave-container">
+        <div class="wave wave1"></div>
+        <div class="wave wave2"></div>
+        <div class="wave wave3"></div>
+      </div>
+    </div>
   </div>
+
   
   <div id="speechBox">
   <p id="output">🎙️ Say something...</p>
