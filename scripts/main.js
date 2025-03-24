@@ -66,7 +66,7 @@ function speak(message) {
 }
 
 async function fetchAIResponse(prompt) {
-  const response = await fetch("https://replit.com/@ciphershadow197/iris-ai-backend#index.js", {
+  const response = await fetch("https://iris-ai-backend.ciphershadow197.repl.co/ask", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
