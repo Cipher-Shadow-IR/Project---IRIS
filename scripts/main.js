@@ -41,27 +41,41 @@ function handleCommand(command) {
   } else if (command.includes("mail")) {
     speak('Gotta Check Inbox? \n here you go!.');
     window.open("https://mail.google.com/mail/", "_blank");
-  } else if (command.includes("note")) {
+  } else if (command.includes("notepad")) {
     speak('Want to make a Note? \n here you go! make sure to save the note lol!');
     window.open("https://www.rapidtables.com/tools/notepad.html", "_blank");
   } else if (command.startsWith("open ")) {
     const siteName = command.replace("open ", "").replace("website", "").trim();
     const searchURL = `https://${siteName.replace(/\s+/g, "")}.com`;
     
-    speak(`Opening ${siteName}...`);
-    window.open(searchURL, "_blank");
+    // Try to open .com domain first
+    fetch(searchURL).then((response) => {
+      if (response.ok) {
+        speak(`Opening ${siteName}.com...`);
+        window.open(searchURL, "_blank");
+      } else {
+        // If .com doesn't work, fall back to Google search
+        speak(`I couldn't find ${siteName}.com, so I'll search it on Google.`);
+        window.open(`https://www.google.com/search?q=${encodeURIComponent(siteName)}`, "_blank");
+      }
+    }).catch(() => {
+      speak(`I couldn't find ${siteName}.com, so I'll search it on Google.`);
+      window.open(`https://www.google.com/search?q=${encodeURIComponent(siteName)}`, "_blank");
+    });
+  }
+
   } else if (command.startsWith("search for ")) {
   const query = command.replace("search for ", "").trim();
   speak(`Searching Google for ${query}`);
   window.open(`https://www.google.com/search?q=${encodeURIComponent(query)}`, "_blank");
-} else if (command.startsWith("search on youtube for ")) {
-  const query = command.replace("search on youtube for ", "").trim();
-  speak(`Searching YouTube for ${query}`);
-  window.open(`https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`, "_blank");
-} else {
-    speak("Hmm... I didn't get that, but let me think...");
-    fetchAIResponse(command);
-  }
+  } else if (command.startsWith("search on youtube for ")) {
+    const query = command.replace("search on youtube for ", "").trim();
+    speak(`Searching YouTube for ${query}`);
+    window.open(`https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`, "_blank");
+  } else {
+      speak("Hmm... I didn't get that, but let me think...");
+      fetchAIResponse(command);
+    }
 
 }
 
