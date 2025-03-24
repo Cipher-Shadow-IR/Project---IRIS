@@ -50,7 +50,15 @@ function handleCommand(command) {
     
     speak(`Opening ${siteName}...`);
     window.open(searchURL, "_blank");
-  }else {
+  } else if (command.startsWith("search for ")) {
+  const query = command.replace("search for ", "").trim();
+  speak(`Searching Google for ${query}`);
+  window.open(`https://www.google.com/search?q=${encodeURIComponent(query)}`, "_blank");
+} else if (command.startsWith("search on youtube for ")) {
+  const query = command.replace("search on youtube for ", "").trim();
+  speak(`Searching YouTube for ${query}`);
+  window.open(`https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`, "_blank");
+} else {
     speak("Hmm... I didn't get that, but let me think...");
     fetchAIResponse(command);
   }
