@@ -44,7 +44,13 @@ function handleCommand(command) {
   } else if (command.includes("note")) {
     speak('Want to make a Note? \n here you go! make sure to save the note lol!');
     window.open("https://www.rapidtables.com/tools/notepad.html", "_blank");
-  } else {
+  } else if (command.startsWith("open ")) {
+    const siteName = command.replace("open ", "").replace("website", "").trim();
+    const searchURL = `https://${siteName.replace(/\s+/g, "")}.com`;
+    
+    speak(`Opening ${siteName}...`);
+    window.open(searchURL, "_blank");
+  }else {
     speak("Hmm... I didn't get that, but let me think...");
     fetchAIResponse(command);
   }
