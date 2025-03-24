@@ -80,4 +80,60 @@ async function fetchAIResponse(prompt) {
   speak(aiMessage);
 }
 
+const express = require("express");
+const cors = require("cors");
+const axios = require("axios");
+require("dotenv").config(); // 👈 Load the .env file
 
+const app = express();
+
+app.use(cors());
+app.use(express.json());
+
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+
+app.post("/ask", async (req, res) => {
+  const userMessage = req.body.message;
+
+  try {
+    const response = await axios.post(
+      "https://api.openai.com/v1/chat/completions",
+      {
+        model: "gpt-3.5-turbo",
+        messages: [
+          {
+            role: "system",
+            content: "You are IRIS, a helpful, smart voice assistant created by Ishaan Ray. Answer clearly and helpfully.",
+          },
+          {
+            role: "user",
+            content: userMessage,
+          },
+        ],
+        temperature: 0.7,
+        max_tokens: 150,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${OPENAI_API_KEY}`,
+        },
+      }
+    );
+
+    res.json({ reply: response.data.choices[0].message.content });
+  } catch (err) {
+    console.error(err.response?.data || err.message);
+    res.status(500).json({ error: "Something went wrong." });
+  }
+});
+
+// ✅ This helps the frontend test connection
+app.get("/", (req, res) => {
+  res.send("✅ IRIS AI backend is up and running!");
+});
+
+const PORT = 5000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
