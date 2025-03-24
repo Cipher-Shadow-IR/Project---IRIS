@@ -45,19 +45,74 @@ h1 {
 }
 
 /* === MIC Button === */
-#listenBtn {
+.mic-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px;
+}
+
+.mic-circle {
+  position: relative;
   width: 80px;
   height: 80px;
+  background-color: #4CAF50;
   border-radius: 50%;
-  background-color: #00fff7;
-  color: #0f0f0f;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+}
+
+.mic-circle button {
+  font-size: 32px;
   border: none;
-  font-size: 2rem;
+  background-color: transparent;
+  color: white;
   cursor: pointer;
-  z-index: 2;
-  position: relative;
-  box-shadow: 0 0 15px #00fff7, 0 0 30px #00fff7;
-  transition: transform 0.3s ease;
+}
+
+/* Waves around the mic circle */
+.wave-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+}
+
+.wave {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  border: 2px solid rgba(0, 255, 0, 0.6);
+  border-radius: 50%;
+  animation: waveAnimation 2s infinite ease-out;
+}
+
+.wave1 {
+  animation-delay: 0s;
+}
+
+.wave2 {
+  animation-delay: 0.5s;
+  opacity: 0.5;
+}
+
+.wave3 {
+  animation-delay: 1s;
+  opacity: 0.3;
+}
+
+@keyframes waveAnimation {
+  0% {
+    transform: scale(0.6);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.4);
+    opacity: 0;
+  }
 }
 
 #listenBtn:hover {
