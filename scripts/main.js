@@ -21,49 +21,70 @@ function startListening() {
 }
 
 function handleCommand(command) {
-  if (command.includes("youtube")) {
-    speak('Surely! Opening Youtube.');
-    window.open("https://youtube.com", "_blank");
-  } else if (command.includes("time")) {
+  const say = speak; // Alias for clarity
+
+  const openInNewTab = (url, message) => {
+    say(message);
+    window.open(url, "_blank");
+  };
+
+  const lowerCommand = command.toLowerCase();
+
+  if (lowerCommand.includes("youtube")) {
+    openInNewTab("https://youtube.com", "Surely! Opening YouTube.");
+  } 
+  
+  else if (lowerCommand.includes("time")) {
     const now = new Date();
     const time = now.toLocaleTimeString();
-    speak("The time in your region is " + time);
-  } else if (command.includes("compiler")) {
-    speak('Ahhh! Be ready!!! \n The INFINITY COMPILER HUB made by Ishaan Ray is coming up in your screen, go on with numerous compilers; Traveller!');
-    window.open("https://infinitycompilerhub.netlify.app/", "_blank");
-  } else if (command.includes("github")) {
-    speak('Surely! Opening Github.');
-      if (command.includes("profile")){
-        window.open("https://github.com/Cipher-Shadow-IR/", "_blank");
-      } else {
-        window.open("https://github.com/", "_blank");
-      }
-  } else if (command.includes("mail")) {
-    speak('Gotta Check Inbox? \n here you go!.');
-    window.open("https://mail.google.com/mail/", "_blank");
-  } else if (command.includes("note")) {
-    speak('Want to make a Note? \n here you go! make sure to save the note lol!');
-    window.open("https://www.rapidtables.com/tools/notepad.html", "_blank");
-  } else if (command.startsWith("open ")) {
-    const siteName = command.replace("open ", "").replace("website", "").trim();
-    const searchURL = `https://${siteName.replace(/\s+/g, "")}.com`;
-    
-    speak(`Opening ${siteName}...`);
-    window.open(searchURL, "_blank");
-  } else if (command.startsWith("search for ")) {
-  const query = command.replace("search for ", "").trim();
-  speak(`Searching Google for ${query}`);
-  window.open(`https://www.google.com/search?q=${encodeURIComponent(query)}`, "_blank");
-} else if (command.startsWith("search on youtube for ")) {
-  const query = command.replace("search on youtube for ", "").trim();
-  speak(`Searching YouTube for ${query}`);
-  window.open(`https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`, "_blank");
-} else {
-    speak("Hmm... I didn't get that, but let me think...");
-    fetchAIResponse(command);
+    say(`The time in your region is ${time}`);
+  } 
+  
+  else if (lowerCommand.includes("compiler")) {
+    openInNewTab(
+      "https://infinitycompilerhub.netlify.app/",
+      "Ahhh! Be ready!!! \n The INFINITY COMPILER HUB made by Ishaan Ray is coming up on your screen. Go on with numerous compilers, Traveller!"
+    );
+  } 
+  
+  else if (lowerCommand.includes("github")) {
+    if (lowerCommand.includes("profile")) {
+      openInNewTab("https://github.com/Cipher-Shadow-IR/", "Surely! Opening your GitHub profile.");
+    } else {
+      openInNewTab("https://github.com/", "Surely! Opening GitHub.");
+    }
+  } 
+  
+  else if (lowerCommand.includes("mail")) {
+    openInNewTab("https://mail.google.com/mail/", "Gotta check your inbox?\nHere you go!");
+  } 
+  
+  else if (lowerCommand.includes("note")) {
+    openInNewTab("https://www.rapidtables.com/tools/notepad.html", "Want to make a note?\nHere you go! Make sure to save it lol!");
   }
 
+  else if (lowerCommand.startsWith("open ")) {
+    const siteName = lowerCommand.replace("open", "").replace("website", "").trim();
+    const formattedURL = `https://${siteName.replace(/\s+/g, "")}.com`;
+    openInNewTab(formattedURL, `Opening ${siteName}...`);
+  }
+
+  else if (lowerCommand.startsWith("search for ")) {
+    const query = lowerCommand.replace("search for ", "").trim();
+    openInNewTab(`https://www.google.com/search?q=${encodeURIComponent(query)}`, `Searching Google for ${query}`);
+  }
+
+  else if (lowerCommand.startsWith("search on youtube for ")) {
+    const query = lowerCommand.replace("search on youtube for ", "").trim();
+    openInNewTab(`https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`, `Searching YouTube for ${query}`);
+  }
+
+  else {
+    say("Hmm... I didn't get that, but let me think...");
+    fetchAIResponse(command);
+  }
 }
+
 
 function toggleListening() {
   if (micWrapper.classList.contains("listening")) {
