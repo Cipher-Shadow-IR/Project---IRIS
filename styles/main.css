@@ -5,73 +5,80 @@
   box-sizing: border-box;
 }
 
+:root {
+  --neon-cyan: #00ffff;
+  --neon-aqua: #0fffcf;
+  --dark-bg: #0f0f0f;
+}
+
 body {
-  background: #0f0f0f;
+  background: var(--dark-bg);
   font-family: 'Orbitron', sans-serif;
-  color: #00ffff;
-  overflow: hidden;
-  height: 100vh;
-  width: 100vw;
+  color: var(--neon-cyan);
+  min-height: 100vh;
+  min-width: 100vw;
   position: relative;
+  overflow-x: hidden;
 }
 
 /* ==== Container ==== */
 .container {
   position: relative;
   z-index: 2;
-  text-align: center;
-  padding-top: 5vh;
+  padding: 5vh 5vw;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  min-height: 100vh;
 }
 
 /* ==== Title & Subtitle ==== */
 .iris-title {
-  font-size: 3.2rem;
-  letter-spacing: 10px;
-  color: #00ffff;
-  text-shadow: 0 0 15px #00ffff;
+  font-size: clamp(2rem, 8vw, 3.2rem);
+  letter-spacing: clamp(4px, 2vw, 10px);
+  color: var(--neon-cyan);
+  text-shadow: 0 0 15px rgba(0, 255, 255, 0.8);
   margin-bottom: 1rem;
+  line-height: 1.2;
 }
 
 .iris-subtitle {
-  font-size: 1.2rem;
-  color: #0fffcf;
+  font-size: clamp(0.9rem, 3vw, 1.2rem);
+  color: var(--neon-aqua);
   margin-bottom: 4rem;
-  text-shadow: 0 0 10px #0fffcf;
+  text-shadow: 0 0 10px rgba(15, 255, 207, 0.8);
+  max-width: 90%;
 }
 
 /* ==== Mic Visualizer ==== */
 .mic-visual-container {
   position: relative;
-  width: 160px;
-  height: 160px;
+  width: min(160px, 40vw);
+  height: min(160px, 40vw);
   margin-bottom: 2.5rem;
 }
 
 .mic-wrapper {
-  width: 100px;
-  height: 100px;
+  width: min(100px, 25vw);
+  height: min(100px, 25vw);
   border-radius: 50%;
   background: #101820;
-  border: 2px solid #00ffff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  border: 2px solid var(--neon-cyan);
+  display: grid;
+  place-items: center;
   margin: auto;
-  box-shadow: 0 0 20px #00ffff88;
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
   position: relative;
   z-index: 5;
   transition: transform 0.3s ease-in-out;
 }
 
 #listenBtn {
-  font-size: 2.5rem;
+  font-size: clamp(1.5rem, 6vw, 2.5rem);
   background: transparent;
   border: none;
-  color: #00ffff;
+  color: var(--neon-cyan);
   cursor: pointer;
   transition: transform 0.2s ease-in-out;
 }
@@ -83,11 +90,11 @@ body {
 /* ==== Audio Wave Animation ==== */
 .wave-circle {
   position: absolute;
-  width: 100px;
-  height: 100px;
-  border: 2px solid #00ffff99;
+  width: min(100px, 25vw);
+  height: min(100px, 25vw);
+  border: 2px solid rgba(0, 255, 255, 0.6);
   border-radius: 50%;
-  animation: pulse 2s infinite ease-in-out;
+  animation: pulse 2s infinite linear;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
@@ -96,44 +103,32 @@ body {
   pointer-events: none;
 }
 
-#wave1 {
-  animation-delay: 0s;
-}
-#wave2 {
-  animation-delay: 1s;
-}
-
-.mic-wrapper.listening ~ #wave1,
-.mic-wrapper.listening ~ #wave2,
-.listening .wave-circle {
-  opacity: 1;
-}
-
 @keyframes pulse {
   0% {
     transform: translate(-50%, -50%) scale(1);
     opacity: 0.7;
   }
   100% {
-    transform: translate(-50%, -50%) scale(2.5);
+    transform: translate(-50%, -50%) scale(2);
     opacity: 0;
   }
 }
 
 /* ==== Output Card ==== */
 .output-card {
-  background: rgba(0, 255, 255, 0.05);
+  background: linear-gradient(to bottom right, 
+    rgba(0, 255, 255, 0.05), 
+    rgba(0, 255, 255, 0.15));
   backdrop-filter: blur(15px);
-  border: 1px solid #00ffff33;
+  -webkit-backdrop-filter: blur(15px);
+  border: 1px solid rgba(0, 255, 255, 0.2);
   border-radius: 15px;
-  padding: 1rem 2rem;
-  width: 90%;
-  max-width: 600px;
+  padding: 1.5rem;
+  width: min(90%, 600px);
   margin: 0 auto;
-  text-align: center;
-  font-size: 1rem;
-  color: #ffffffbb;
-  box-shadow: 0 0 20px #00ffff44;
+  font-size: clamp(0.9rem, 3vw, 1rem);
+  color: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
 }
 
 /* ==== Footer ==== */
@@ -142,42 +137,34 @@ body {
   bottom: 1rem;
   width: 100%;
   text-align: center;
-  font-size: 0.9rem;
-  color: #0fffcf;
-  text-shadow: 0 0 8px #0fffcf;
+  font-size: clamp(0.7rem, 2.5vw, 0.9rem);
+  color: var(--neon-aqua);
+  text-shadow: 0 0 8px rgba(15, 255, 207, 0.8);
+  padding: 0 1rem;
 }
 
 /* ==== Background Canvas ==== */
 #bgCanvas {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   z-index: 0;
-  width: 100%;
-  height: 100%;
-  background: radial-gradient(circle, #0f0f0f, #000000);
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
 }
 
-
-/* ==== Responsive ==== */
+/* ==== Media Queries ==== */
 @media (max-width: 768px) {
-  .iris-title {
-    font-size: 2.2rem;
-    letter-spacing: 6px;
+  .container {
+    padding: 5vh 3vw;
   }
-
+  
   .iris-subtitle {
-    font-size: 1rem;
     margin-bottom: 3rem;
   }
 
-  .mic-visual-container {
-    width: 140px;
-    height: 140px;
-  }
-
   .output-card {
-    font-size: 0.9rem;
     padding: 1rem;
   }
 }
