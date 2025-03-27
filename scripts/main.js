@@ -20,70 +20,97 @@ function startListening() {
   recognition.start();
 }
 
-function handleCommand(command) {
-  const say = speak; // Alias for clarity
-
-  const openInNewTab = (url, message) => {
-    say(message);
-    window.open(url, "_blank");
-  };
-
-  const lowerCommand = command.toLowerCase();
-
-  if (lowerCommand.includes("youtube")) {
-    openInNewTab("https://youtube.com", "Surely! Opening YouTube.");
-  } 
-  
-  else if (lowerCommand.includes("time")) {
-    const now = new Date();
-    const time = now.toLocaleTimeString();
-    say(`The time in your region is ${time}`);
-  } 
-  
-  else if (lowerCommand.includes("compiler")) {
-    openInNewTab(
-      "https://infinitycompilerhub.netlify.app/",
-      "Ahhh! Be ready!!! \n The INFINITY COMPILER HUB made by Ishaan Ray is coming up on your screen. Go on with numerous compilers, Traveller!"
-    );
-  } 
-  
-  else if (lowerCommand.includes("github")) {
-    if (lowerCommand.includes("profile")) {
-      openInNewTab("https://github.com/Cipher-Shadow-IR/", "Surely! Opening your GitHub profile.");
-    } else {
-      openInNewTab("https://github.com/", "Surely! Opening GitHub.");
+// 🔧 Command registry: map of keywords -> action
+const commands = [
+  {
+    keywords: ["youtube"],
+    action: () => {
+      speak("Surely! Opening YouTube.");
+      window.open("https://youtube.com", "_blank");
     }
-  } 
-  
-  else if (lowerCommand.includes("mail")) {
-    openInNewTab("https://mail.google.com/mail/", "Gotta check your inbox?\nHere you go!");
-  } 
-  
-  else if (lowerCommand.includes("note")) {
-    openInNewTab("https://www.rapidtables.com/tools/notepad.html", "Want to make a note?\nHere you go! Make sure to save it lol!");
+  },
+  {
+    keywords: ["time", "what's the time", "tell me the time"],
+    action: () => {
+      const now = new Date();
+      const time = now.toLocaleTimeString();
+      speak("The time in your region is " + time);
+    }
+  },
+  {
+    keywords: ["compiler", "infinity compiler"],
+    action: () => {
+      speak("Ahhh! Be ready!!! The INFINITY COMPILER HUB made by Ishaan Ray is coming up on your screen. Go on with numerous compilers; Traveller!");
+      window.open("https://infinitycompilerhub.netlify.app/", "_blank");
+    }
+  },
+  {
+    keywords: ["github"],
+    action: (command) => {
+      speak("Surely! Opening GitHub.");
+      if (command.includes("profile")) {
+        window.open("https://github.com/Cipher-Shadow-IR/", "_blank");
+      } else {
+        window.open("https://github.com/", "_blank");
+      }
+    }
+  },
+  {
+    keywords: ["mail", "gmail", "email"],
+    action: () => {
+      speak("Gotta check inbox? Here you go!");
+      window.open("https://mail.google.com/mail/", "_blank");
+    }
+  },
+  {
+    keywords: ["note", "notepad"],
+    action: () => {
+      speak("Want to make a note? Here you go! Make sure to save it, lol.");
+      window.open("https://www.rapidtables.com/tools/notepad.html", "_blank");
+    }
+  },
+  {
+    keywords: ["search on youtube for"],
+    action: (command) => {
+      const query = command.split("search on youtube for")[1]?.trim();
+      if (query) {
+        speak(`Searching YouTube for ${query}`);
+        window.open(`https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`, "_blank");
+      }
+    }
+  },
+  {
+    keywords: ["search for"],
+    action: (command) => {
+      const query = command.split("search for")[1]?.trim();
+      if (query) {
+        speak(`Searching Google for ${query}`);
+        window.open(`https://www.google.com/search?q=${encodeURIComponent(query)}`, "_blank");
+      }
+    }
+  },
+  {
+    keywords: ["open"],
+    action: (command) => {
+      const site = command.replace("open", "").replace("website", "").trim();
+      const url = `https://${site.replace(/\s+/g, "")}.com`;
+      speak(`Opening ${site}...`);
+      window.open(url, "_blank");
+    }
   }
+];
 
-  else if (lowerCommand.startsWith("open ")) {
-    const siteName = lowerCommand.replace("open", "").replace("website", "").trim();
-    const formattedURL = `https://${siteName.replace(/\s+/g, "")}.com`;
-    openInNewTab(formattedURL, `Opening ${siteName}...`);
-  }
+function handleCommand(command) {
+  const matched = commands.find(c => c.keywords.some(k => command.includes(k)));
 
-  else if (lowerCommand.startsWith("search for ")) {
-    const query = lowerCommand.replace("search for ", "").trim();
-    openInNewTab(`https://www.google.com/search?q=${encodeURIComponent(query)}`, `Searching Google for ${query}`);
-  }
-
-  else if (lowerCommand.startsWith("search on youtube for ")) {
-    const query = lowerCommand.replace("search on youtube for ", "").trim();
-    openInNewTab(`https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`, `Searching YouTube for ${query}`);
-  }
-
-  else {
-    say("Hmm... I didn't get that, but let me think...");
+  if (matched) {
+    matched.action(command); // Pass command in case handler needs it
+  } else {
+    speak("Hmm... I didn't get that, but let me think...");
     fetchAIResponse(command);
   }
 }
+
 
 
 function toggleListening() {
