@@ -1,167 +1,153 @@
-// ... (Keep previous constants and speech recognition setup)
+const output = document.getElementById("output");
 
-// Enhanced Background Animation
-const canvas = document.getElementById("bgCanvas");
-const ctx = canvas.getContext("2d");
-let particles = [];
-const PARTICLE_COUNT = 150;
-const MAX_RADIUS = 4;
-const COLOR_PALETTE = ['#00ffff', '#0fffcf', '#ff00ff', '#00ff87'];
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+const recognition = new SpeechRecognition();
 
-// Particle class for background effects
-class Particle {
-  constructor() {
-    this.reset(true);
-  }
+speak("Hi! This is your Personal Voice Assistant - IRIS made by Ishaan Ray. How may I help you?")
+recognition.onstart = function() {
+  output.textContent = "Listening...";
+};
 
-  reset(initial = false) {
-    this.x = initial ? Math.random() * canvas.width : -MAX_RADIUS;
-    this.y = Math.random() * canvas.height;
-    this.radius = Math.random() * MAX_RADIUS;
-    this.vx = (Math.random() * 2) + (analyser ? dataArray[10]/50 : 1);
-    this.vy = (Math.random() - 0.5) * 0.5;
-    this.color = COLOR_PALETTE[Math.floor(Math.random() * COLOR_PALETTE.length)];
-    this.alpha = Math.random() * 0.5 + 0.3;
-    this.life = 1;
-  }
+recognition.onresult = function(event) {
+  const spokenText = event.results[0][0].transcript;
+  output.textContent = "You said: " + spokenText;
 
-  update() {
-    if (this.life > 0) {
-      this.x += this.vx;
-      this.y += this.vy;
-      this.life -= 0.002;
-      
-      if (this.x > canvas.width + MAX_RADIUS) this.reset();
-    }
-  }
+  // You can now do stuff based on voice:
+  handleCommand(spokenText.toLowerCase());
+};
 
-  draw() {
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, this.radius * this.life, 0, Math.PI * 2);
-    const gradient = ctx.createRadialGradient(
-      this.x, this.y, 0, 
-      this.x, this.y, this.radius * this.life
-    );
-    gradient.addColorStop(0, `${this.color}${Math.floor(this.alpha * 255).toString(16)}`);
-    gradient.addColorStop(1, `${this.color}00`);
-    ctx.fillStyle = gradient;
-    ctx.fill();
-  }
+function startListening() {
+  recognition.start();
 }
 
-// Initialize particles
-for (let i = 0; i < PARTICLE_COUNT; i++) {
-  particles.push(new Particle());
-}
-
-// Dynamic Gradient Background
-function createGradient() {
-  const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-  gradient.addColorStop(0, '#001119');
-  gradient.addColorStop(1, '#000a0f');
-  return gradient;
-}
-
-// Enhanced Audio Visualization
-function visualizePitch() {
-  ctx.fillStyle = createGradient();
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-  analyser.getByteFrequencyData(dataArray);
-  const centerX = canvas.width / 2;
-  const centerY = canvas.height / 2;
-
-  // Main frequency circle
-  ctx.beginPath();
-  ctx.arc(centerX, centerY, 80 + (dataArray[20]/2), 0, Math.PI * 2);
-  const gradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, 200);
-  gradient.addColorStop(0, 'rgba(0, 255, 255, 0.4)');
-  gradient.addColorStop(1, 'rgba(0, 255, 255, 0)');
-  ctx.fillStyle = gradient;
-  ctx.fill();
-
-  // Frequency bars
-  const barWidth = canvas.width / bufferLength;
-  ctx.save();
-  ctx.translate(0, canvas.height / 2);
-  for (let i = 0; i < bufferLength; i++) {
-    const barHeight = dataArray[i] * 2;
-    const gradient = ctx.createLinearGradient(i * barWidth, 0, i * barWidth, barHeight);
-    gradient.addColorStop(0, `hsl(${(i * 360)/bufferLength}, 100%, 50%)`);
-    gradient.addColorStop(1, `hsl(${(i * 360)/bufferLength}, 100%, 20%)`);
+function handleCommand(command) {
+  if (command.includes("youtube")) {
+    speak('Surely! Opening Youtube.');
+    window.open("https://youtube.com", "_blank");
+  } else if (command.includes("time")) {
+    const now = new Date();
+    const time = now.toLocaleTimeString();
+    speak("The time in your region is " + time);
+  } else if (command.includes("compiler")) {
+    speak('Ahhh! Be ready!!! \n The INFINITY COMPILER HUB made by Ishaan Ray is coming up in your screen, go on with numerous compilers; Traveller!');
+    window.open("https://infinitycompilerhub.netlify.app/", "_blank");
+  } else if (command.includes("github")) {
+    speak('Surely! Opening Github.');
+      if (command.includes("profile")){
+        window.open("https://github.com/Cipher-Shadow-IR/", "_blank");
+      } else {
+        window.open("https://github.com/", "_blank");
+      }
+  } else if (command.includes("mail")) {
+    speak('Gotta Check Inbox? \n here you go!.');
+    window.open("https://mail.google.com/mail/", "_blank");
+  } else if (command.includes("note")) {
+    speak('Want to make a Note? \n here you go! make sure to save the note lol!');
+    window.open("https://www.rapidtables.com/tools/notepad.html", "_blank");
+  } else if (command.startsWith("open ")) {
+    const siteName = command.replace("open ", "").replace("website", "").trim();
+    const searchURL = `https://${siteName.replace(/\s+/g, "")}.com`;
     
-    ctx.fillStyle = gradient;
-    ctx.fillRect(i * barWidth, -barHeight/2, barWidth-2, barHeight);
+    speak(`Opening ${siteName}...`);
+    window.open(searchURL, "_blank");
+  } else if (command.startsWith("search for ")) {
+  const query = command.replace("search for ", "").trim();
+  speak(`Searching Google for ${query}`);
+  window.open(`https://www.google.com/search?q=${encodeURIComponent(query)}`, "_blank");
+} else if (command.startsWith("search on youtube for ")) {
+  const query = command.replace("search on youtube for ", "").trim();
+  speak(`Searching YouTube for ${query}`);
+  window.open(`https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`, "_blank");
+} else {
+    speak("Hmm... I didn't get that, but let me think...");
+    fetchAIResponse(command);
   }
-  ctx.restore();
 
-  // Particle system
-  particles.forEach(p => {
-    p.vx = (Math.random() * 2) + (dataArray[10]/50);
-    p.update();
-    p.draw();
-  });
-
-  // Rotating geometric shapes
-  ctx.save();
-  ctx.translate(centerX, centerY);
-  ctx.rotate(Date.now() * 0.0005);
-  ctx.strokeStyle = `rgba(0, 255, 255, ${dataArray[30]/255})`;
-  ctx.lineWidth = 3;
-  ctx.beginPath();
-  for (let i = 0; i < 6; i++) {
-    const angle = (i * Math.PI) / 3;
-    const x = Math.cos(angle) * (80 + dataArray[i*4]);
-    const y = Math.sin(angle) * (80 + dataArray[i*4]);
-    ctx.lineTo(x, y);
-  }
-  ctx.closePath();
-  ctx.stroke();
-  ctx.restore();
-
-  requestAnimationFrame(visualizePitch);
 }
 
-// Enhanced Toggle Listening with Visual Feedback
 function toggleListening() {
   if (micWrapper.classList.contains("listening")) {
-    recognition.stop();
-    speak("Standing by");
-    audioCtx.suspend();
-    wave1.style.opacity = wave2.style.opacity = "0";
+    stopListening();
   } else {
-    listenBtn.innerHTML = "🛑";
-    recognition.start();
-    audioCtx.resume();
-    wave1.style.opacity = wave2.style.opacity = "1";
-
-    navigator.mediaDevices.getUserMedia({ audio: true })
-      .then((stream) => {
-        const source = audioCtx.createMediaStreamSource(stream);
-        source.connect(analyser);
-        visualizePitch();
-        
-        // Add initial visual burst
-        particles.forEach(p => p.reset());
-        ctx.fillStyle = 'rgba(0, 255, 255, 0.2)';
-        ctx.beginPath();
-        ctx.arc(canvas.width/2, canvas.height/2, 100, 0, Math.PI * 2);
-        ctx.fill();
-      });
+    startListening();
   }
 }
 
-// Handle window resize
-window.addEventListener('resize', () => {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-  particles.forEach(p => p.reset(true));
+function speak(message) {
+  const speech = new SpeechSynthesisUtterance();
+  speech.text = message;
+  window.speechSynthesis.speak(speech);
+}
+
+async function fetchAIResponse(prompt) {
+  const response = await fetch("https://iris-ai-backend.ciphershadow197.repl.co/ask", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ message: prompt }),
+  });
+
+  const data = await response.json();
+  const aiMessage = data.reply;
+  output.textContent = "IRIS says: " + aiMessage;
+  speak(aiMessage);
+}
+
+const express = require("express");
+const cors = require("cors");
+const axios = require("axios");
+require("dotenv").config(); // 👈 Load the .env file
+
+const app = express();
+
+app.use(cors());
+app.use(express.json());
+
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+
+app.post("/ask", async (req, res) => {
+  const userMessage = req.body.message;
+
+  try {
+    const response = await axios.post(
+      "https://api.openai.com/v1/chat/completions",
+      {
+        model: "gpt-3.5-turbo",
+        messages: [
+          {
+            role: "system",
+            content: "You are IRIS, a helpful, smart voice assistant created by Ishaan Ray. Answer clearly and helpfully.",
+          },
+          {
+            role: "user",
+            content: userMessage,
+          },
+        ],
+        temperature: 0.7,
+        max_tokens: 150,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${OPENAI_API_KEY}`,
+        },
+      }
+    );
+
+    res.json({ reply: response.data.choices[0].message.content });
+  } catch (err) {
+    console.error(err.response?.data || err.message);
+    res.status(500).json({ error: "Something went wrong." });
+  }
 });
 
-// Initialize canvas size
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+// ✅ This helps the frontend test connection
+app.get("/", (req, res) => {
+  res.send("✅ IRIS AI backend is up and running!");
+});
 
-// Start with subtle animation
-ctx.fillStyle = createGradient();
-ctx.fillRect(0, 0, canvas.width, canvas.height);
+const PORT = 5000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
