@@ -2,33 +2,61 @@ const output = document.getElementById("output");
 
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 const recognition = new SpeechRecognition();
+const wakeRecognition = new SpeechRecognition();
 
-speak("Hi! This is your Personal Voice Assistant - IRIS made by Ishaan Ray. How may I help you?")
-recognition.onstart = function() {
+let recognitionListening = false;
+
+speak("Hi! This is your Personal Voice Assistant - IRIS made by Ishaan Ray. How may I help you?");
+
+// ---------------- Wake Word Recognition ----------------
+wakeRecognition.continuous = true;
+wakeRecognition.interimResults = false;
+
+wakeRecognition.onresult = (event) => {
+  const transcript = event.results[event.resultIndex][0].transcript.toLowerCase();
+  console.log("Wake Check:", transcript);
+
+  if (transcript.includes("hey iris")) {
+    speak("Yes? I'm listening...");
+    wakeRecognition.stop(); // Pause wake listening
+    startListening();       // Begin active listening
+  }
+};
+
+wakeRecognition.onend = () => {
+  if (!recognitionListening) {
+    wakeRecognition.start(); // Keep listening for "Hey IRIS"
+  }
+};
+
+// ---------------- Command Recognition ----------------
+recognition.onstart = function () {
+  recognitionListening = true;
   output.textContent = "Listening...";
 };
 
-recognition.onresult = function(event) {
+recognition.onresult = function (event) {
   const spokenText = event.results[0][0].transcript;
   output.textContent = "You said: " + spokenText;
 
-  // You can now do stuff based on voice:
   handleCommand(spokenText.toLowerCase());
 };
 
+recognition.onend = function () {
+  recognitionListening = false;
+  wakeRecognition.start(); // Resume wake word detection
+};
+
+// Start listening for wake word on page load
+wakeRecognition.start();
+
+// ---------------- Command Handler ----------------
 function startListening() {
+  recognitionListening = true;
   recognition.start();
 }
 
-// 🔧 Command registry: map of keywords -> action
 const commands = [
-  {
-    keywords: ["youtube"],
-    action: () => {
-      speak("Surely! Opening YouTube.");
-      window.open("https://youtube.com", "_blank");
-    }
-  },
   {
     keywords: ["time", "what's the time", "tell me the time"],
     action: () => {
@@ -63,7 +91,7 @@ const commands = [
     }
   },
   {
-    keywords: ["note", "notepad"],
+    keywords: ["notepad"],
     action: () => {
       speak("Want to make a note? Here you go! Make sure to save it, lol.");
       window.open("https://www.rapidtables.com/tools/notepad.html", "_blank");
@@ -92,32 +120,22 @@ const commands = [
   {
     keywords: ["open"],
     action: (command) => {
-      const site = command.replace("open", "").replace("website", "").trim();
-      const url = `https://${site.replace(/\s+/g, "")}.com`;
+      let site = command.replace("open", "").replace("website", "").trim();
+      let url = site.includes(".") ? `https://${site}` : `https://${site.replace(/\s+/g, "")}.com`;
       speak(`Opening ${site}...`);
       window.open(url, "_blank");
     }
-  }
+  },
 ];
 
 function handleCommand(command) {
   const matched = commands.find(c => c.keywords.some(k => command.includes(k)));
 
   if (matched) {
-    matched.action(command); // Pass command in case handler needs it
+    matched.action(command);
   } else {
     speak("Hmm... I didn't get that, but let me think...");
     fetchAIResponse(command);
-  }
-}
-
-
-
-function toggleListening() {
-  if (micWrapper.classList.contains("listening")) {
-    stopListening();
-  } else {
-    startListening();
   }
 }
 
@@ -141,61 +159,3 @@ async function fetchAIResponse(prompt) {
   output.textContent = "IRIS says: " + aiMessage;
   speak(aiMessage);
 }
-
-const express = require("express");
-const cors = require("cors");
-const axios = require("axios");
-require("dotenv").config(); // 👈 Load the .env file
-
-const app = express();
-
-app.use(cors());
-app.use(express.json());
-
-const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
-
-app.post("/ask", async (req, res) => {
-  const userMessage = req.body.message;
-
-  try {
-    const response = await axios.post(
-      "https://api.openai.com/v1/chat/completions",
-      {
-        model: "gpt-3.5-turbo",
-        messages: [
-          {
-            role: "system",
-            content: "You are IRIS, a helpful, smart voice assistant created by Ishaan Ray. Answer clearly and helpfully.",
-          },
-          {
-            role: "user",
-            content: userMessage,
-          },
-        ],
-        temperature: 0.7,
-        max_tokens: 150,
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${OPENAI_API_KEY}`,
-        },
-      }
-    );
-
-    res.json({ reply: response.data.choices[0].message.content });
-  } catch (err) {
-    console.error(err.response?.data || err.message);
-    res.status(500).json({ error: "Something went wrong." });
-  }
-});
-
-// ✅ This helps the frontend test connection
-app.get("/", (req, res) => {
-  res.send("✅ IRIS AI backend is up and running!");
-});
-
-const PORT = 5000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
