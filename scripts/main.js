@@ -117,40 +117,58 @@ async function fetchAIResponse(prompt) {
 }
 
 // Background Animation Canvas (optional if added in HTML)
+// Audio Pitch Visualization Setup
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+let analyser = audioCtx.createAnalyser();
+analyser.fftSize = 256;
+const bufferLength = analyser.frequencyBinCount;
+const dataArray = new Uint8Array(bufferLength);
+
 const canvas = document.getElementById("bgCanvas");
-const ctx = canvas?.getContext("2d");
+const ctx = canvas.getContext("2d");
 
-if (canvas && ctx) {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
+function visualizePitch() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  let particles = [];
-  for (let i = 0; i < 50; i++) {
-    particles.push({
-      x: Math.random() * canvas.width,
-      y: Math.random() * canvas.height,
-      vx: (Math.random() - 0.5) * 1.5,
-      vy: (Math.random() - 0.5) * 1.5,
-      size: Math.random() * 3 + 1
-    });
+  analyser.getByteFrequencyData(dataArray);
+  const centerX = canvas.width / 2;
+  const centerY = canvas.height / 2;
+  const radius = 80;
+
+  // Draw circular pitch graph
+  for (let i = 0; i < bufferLength; i++) {
+    const angle = (i / bufferLength) * Math.PI * 2;
+    const x = centerX + Math.cos(angle) * (radius + dataArray[i] / 4);
+    const y = centerY + Math.sin(angle) * (radius + dataArray[i] / 4);
+
+    ctx.beginPath();
+    ctx.arc(x, y, 2, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(${dataArray[i]}, ${255 - dataArray[i]}, 255, 0.8)`;
+    ctx.fill();
   }
 
-  function animate() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    for (let p of particles) {
-      p.x += p.vx;
-      p.y += p.vy;
-      if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
-      if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-      ctx.fillStyle = "#00ffff99";
-      ctx.fill();
-    }
-    requestAnimationFrame(animate);
-  }
+  requestAnimationFrame(visualizePitch);
+}
 
-  animate();
+// Activate visualization when recording
+function toggleListening() {
+  if (micWrapper.classList.contains("listening")) {
+    recognition.stop();
+    speak("Stopped listening.");
+    audioCtx.suspend();
+  } else {
+    listenBtn.innerHTML = "🛑";
+    recognition.start();
+    audioCtx.resume();
+
+    // Connect microphone to analyzer
+    navigator.mediaDevices.getUserMedia({ audio: true })
+      .then((stream) => {
+        const source = audioCtx.createMediaStreamSource(stream);
+        source.connect(analyser);
+        visualizePitch();
+      });
+  }
 }
 
 // Optional: Keyboard shortcut to toggle mic
