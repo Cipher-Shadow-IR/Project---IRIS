@@ -1,118 +1,107 @@
-/* ==== Reset & Base ==== */
+/* === Reset & Basics === */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  font-family: 'Orbitron', sans-serif;
 }
 
 body {
   background: #0f0f0f;
-  font-family: 'Orbitron', sans-serif;
-  color: #00ffff;
-  overflow: hidden;
-  height: 100vh;
-  width: 100vw;
-  position: relative;
-}
-
-/* ==== Container ==== */
-.container {
-  position: relative;
-  z-index: 2;
-  text-align: center;
-  padding-top: 5vh;
+  color: #00fff7;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  overflow-x: hidden;
 }
 
-/* ==== Title & Subtitle ==== */
-.iris-title {
-  font-size: 3.2rem;
-  letter-spacing: 10px;
-  color: #00ffff;
-  text-shadow: 0 0 15px #00ffff;
+/* === Title / Banner === */
+h1 {
+  font-size: 3rem;
+  text-shadow: 0 0 20px #00fff7;
   margin-bottom: 1rem;
+  animation: glitch 1.5s infinite;
 }
 
-.iris-subtitle {
-  font-size: 1.2rem;
-  color: #0fffcf;
-  margin-bottom: 4rem;
-  text-shadow: 0 0 10px #0fffcf;
+/* === Voice Log / Command Display === */
+#log {
+  background-color: rgba(0, 255, 247, 0.1);
+  border: 1px solid #00fff7;
+  border-radius: 10px;
+  padding: 20px;
+  width: 90%;
+  max-width: 600px;
+  height: 300px;
+  overflow-y: auto;
+  margin-top: 20px;
+  box-shadow: 0 0 10px #00fff7;
 }
 
-/* ==== Mic Visualizer ==== */
-.mic-visual-container {
-  position: relative;
-  width: 160px;
-  height: 160px;
-  margin-bottom: 2.5rem;
+#log p {
+  margin-bottom: 10px;
+  font-size: 1rem;
 }
 
-.mic-wrapper {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  background: #101820;
-  border: 2px solid #00ffff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: auto;
-  box-shadow: 0 0 20px #00ffff88;
-  position: relative;
-  z-index: 5;
-  transition: transform 0.3s ease-in-out;
-}
-
+/* === MIC Button === */
 #listenBtn {
-  font-size: 2.5rem;
-  background: transparent;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background-color: #00fff7;
+  color: #0f0f0f;
   border: none;
-  color: #00ffff;
+  font-size: 2rem;
   cursor: pointer;
-  transition: transform 0.2s ease-in-out;
+  z-index: 2;
+  position: relative;
+  box-shadow: 0 0 15px #00fff7, 0 0 30px #00fff7;
+  transition: transform 0.3s ease;
 }
 
 #listenBtn:hover {
-  transform: scale(1.15);
+  transform: scale(1.1);
 }
 
-/* ==== Audio Wave Animation ==== */
-.wave-circle {
+/* === Wrapper for Wavy Pulse === */
+.mic-wrapper {
+  position: relative;
+  display: inline-block;
+  margin-top: 30px;
+}
+
+.mic-wrapper::before,
+.mic-wrapper::after {
+  content: "";
   position: absolute;
-  width: 100px;
-  height: 100px;
-  border: 2px solid #00ffff99;
-  border-radius: 50%;
-  animation: pulse 2s infinite ease-in-out;
-  left: 50%;
   top: 50%;
+  left: 50%;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
   transform: translate(-50%, -50%);
-  z-index: 2;
+  background-color: rgba(0, 255, 247, 0.2);
+  z-index: 0;
+  animation: pulseWave 2s infinite ease-in-out;
   opacity: 0;
   pointer-events: none;
 }
 
-#wave1 {
+.mic-wrapper.listening::before {
   animation-delay: 0s;
+  opacity: 1;
 }
-#wave2 {
+.mic-wrapper.listening::after {
   animation-delay: 1s;
-}
-
-.mic-wrapper.listening ~ #wave1,
-.mic-wrapper.listening ~ #wave2,
-.listening .wave-circle {
   opacity: 1;
 }
 
-@keyframes pulse {
+/* === Pulse Animation === */
+@keyframes pulseWave {
   0% {
     transform: translate(-50%, -50%) scale(1);
-    opacity: 0.7;
+    opacity: 0.5;
   }
   100% {
     transform: translate(-50%, -50%) scale(2.5);
@@ -120,62 +109,68 @@ body {
   }
 }
 
-/* ==== Output Card ==== */
-.output-card {
-  background: rgba(0, 255, 255, 0.05);
-  backdrop-filter: blur(15px);
-  border: 1px solid #00ffff33;
-  border-radius: 15px;
-  padding: 1rem 2rem;
-  width: 90%;
-  max-width: 600px;
-  margin: 0 auto;
+
+/* === Typewriter Text Effect === */
+.typewriter {
+  overflow: hidden;
+  white-space: nowrap;
+  border-right: 2px solid #00fff7;
+  animation: typing 3s steps(40, end), blink 0.75s step-end infinite;
+  font-size: 1.5rem;
+  margin-top: 10px;
+}
+
+@keyframes typing {
+  from { width: 0 }
+  to { width: 100% }
+}
+
+@keyframes blink {
+  from, to { border-color: transparent }
+  50% { border-color: #00fff7 }
+}
+
+/* === Glitch Effect === */
+@keyframes glitch {
+  0% { text-shadow: 2px 0 red, -2px 0 cyan; }
+  20% { text-shadow: -2px 0 red, 2px 0 cyan; }
+  40% { text-shadow: 2px 0 red, -2px 0 cyan; }
+  60% { text-shadow: -2px 0 red, 2px 0 cyan; }
+  80% { text-shadow: 2px 0 red, -2px 0 cyan; }
+  100% { text-shadow: -2px 0 red, 2px 0 cyan; }
+}
+#speechBox {
+  background-color: rgba(0, 255, 247, 0.1);
+  border: 2px solid #00fff7;
+  border-radius: 12px;
+  padding: 15px 25px;
+  box-shadow: 0 0 15px #00fff7;
+  margin-top: 20px;
+  max-width: 400px;
   text-align: center;
-  font-size: 1rem;
-  color: #ffffffbb;
-  box-shadow: 0 0 20px #00ffff44;
+  animation: pulse 2s infinite ease-in-out;
 }
 
-/* ==== Footer ==== */
-.footer {
-  position: absolute;
-  bottom: 1rem;
-  width: 100%;
-  text-align: center;
-  font-size: 0.9rem;
-  color: #0fffcf;
-  text-shadow: 0 0 8px #0fffcf;
+#promptText {
+  font-size: 1.2rem;
+  color: #00fff7;
+  text-shadow: 0 0 5px #00fff7;
 }
 
-/* ==== Background Canvas ==== */
-#bgCanvas {
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 0;
-  width: 100%;
-  height: 100%;
+@keyframes pulse {
+  0% { box-shadow: 0 0 5px #00fff7; }
+  50% { box-shadow: 0 0 20px #00fff7; }
+  100% { box-shadow: 0 0 5px #00fff7; }
 }
 
-/* ==== Responsive ==== */
-@media (max-width: 768px) {
-  .iris-title {
-    font-size: 2.2rem;
-    letter-spacing: 6px;
-  }
-
-  .iris-subtitle {
-    font-size: 1rem;
-    margin-bottom: 3rem;
-  }
-
-  .mic-visual-container {
-    width: 140px;
-    height: 140px;
-  }
-
-  .output-card {
-    font-size: 0.9rem;
-    padding: 1rem;
-  }
+/* === Scrollbar Styling === */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #111;
+}
+::-webkit-scrollbar-thumb {
+  background: #00fff7;
+  border-radius: 10px;
 }
