@@ -1,177 +1,167 @@
-const output = document.getElementById("output");
-const micWrapper = document.getElementById("micWrapper");
-const listenBtn = document.getElementById("listenBtn");
-const wave1 = document.getElementById("wave1");
-const wave2 = document.getElementById("wave2");
+// ... (Keep previous constants and speech recognition setup)
 
-const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-const recognition = new SpeechRecognition();
-recognition.interimResults = false;
-recognition.continuous = false;
-recognition.lang = "en-US";
-
-// Speak greeting once on load
-speak("Hi! This is your Personal Voice Assistant - IRIS, made by Ishaan Ray. How may I help you?");
-
-// Voice recognition event handlers
-recognition.onstart = () => {
-  output.textContent = "🔊 IRIS is listening...";
-  micWrapper.classList.add("listening");
-};
-
-recognition.onend = () => {
-  micWrapper.classList.remove("listening");
-  listenBtn.innerHTML = "🎤";
-};
-
-recognition.onresult = (event) => {
-  const spokenText = event.results[0][0].transcript;
-  output.textContent = "🗣️ You said: " + spokenText;
-  handleCommand(spokenText.toLowerCase());
-};
-
-function toggleListening() {
-  if (micWrapper.classList.contains("listening")) {
-    recognition.stop();
-    speak("Stopped listening.");
-  } else {
-    listenBtn.innerHTML = "🛑";
-    recognition.start();
-  }
-}
-
-function speak(message) {
-  const utter = new SpeechSynthesisUtterance(message);
-  utter.lang = "en-US";
-  window.speechSynthesis.speak(utter);
-}
-
-function handleCommand(command) {
-  const openWebsite = (url, speakMsg = "") => {
-    if (speakMsg) speak(speakMsg);
-    window.open(url, "_blank");
-  };
-
-  if (command.includes("youtube")) {
-    openWebsite("https://youtube.com", "Opening YouTube.");
-  } else if (command.includes("github")) {
-    if (command.includes("profile")) {
-      openWebsite("https://github.com/Cipher-Shadow-IR", "Opening your GitHub profile.");
-    } else {
-      openWebsite("https://github.com", "Opening GitHub.");
-    }
-  } else if (command.includes("mail")) {
-    openWebsite("https://mail.google.com/mail/", "Opening Gmail inbox.");
-  } else if (command.includes("notepad")) {
-    openWebsite("https://www.rapidtables.com/tools/notepad.html", "Opening online notepad.");
-  } else if (command.includes("time")) {
-    const now = new Date();
-    speak("The current time is " + now.toLocaleTimeString());
-  } else if (command.includes("compiler")) {
-    openWebsite("https://infinitycompilerhub.netlify.app/", "Launching Infinity Compiler Hub.");
-  } else if (command.startsWith("search on youtube for ")) {
-    const query = command.replace("search on youtube for ", "").trim();
-    openWebsite(`https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`, `Searching YouTube for ${query}`);
-  } else if (command.startsWith("search for ")) {
-    const query = command.replace("search for ", "").trim();
-    openWebsite(`https://www.google.com/search?q=${encodeURIComponent(query)}`, `Searching Google for ${query}`);
-  } else if (command.startsWith("open ")) {
-    const site = command.replace("open ", "").replace("website", "").trim().split(" ").join("");
-    const url = `https://${site}.com`;
-    fetch(url)
-      .then(res => {
-        if (res.ok) {
-          speak(`Opening ${site}.com`);
-          window.open(url, "_blank");
-        } else {
-          throw new Error("Fallback");
-        }
-      })
-      .catch(() => {
-        speak(`Couldn't open ${site}.com, searching on Google instead.`);
-        window.open(`https://www.google.com/search?q=${site}`, "_blank");
-      });
-  } else {
-    speak("Let me think...");
-    fetchAIResponse(command);
-  }
-}
-
-// AI Fetching via Backend (ChatGPT)
-async function fetchAIResponse(prompt) {
-  try {
-    const response = await fetch("https://iris-ai-backend.ciphershadow197.repl.co/ask", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message: prompt }),
-    });
-
-    const data = await response.json();
-    const aiMessage = data.reply;
-    output.textContent = "🤖 IRIS says: " + aiMessage;
-    speak(aiMessage);
-  } catch (err) {
-    output.textContent = "⚠️ Error connecting to IRIS backend.";
-    speak("Something went wrong while connecting to my intelligence core.");
-  }
-}
-
-// Background Animation Canvas (optional if added in HTML)
-// Audio Pitch Visualization Setup
-const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-let analyser = audioCtx.createAnalyser();
-analyser.fftSize = 256;
-const bufferLength = analyser.frequencyBinCount;
-const dataArray = new Uint8Array(bufferLength);
-
+// Enhanced Background Animation
 const canvas = document.getElementById("bgCanvas");
 const ctx = canvas.getContext("2d");
+let particles = [];
+const PARTICLE_COUNT = 150;
+const MAX_RADIUS = 4;
+const COLOR_PALETTE = ['#00ffff', '#0fffcf', '#ff00ff', '#00ff87'];
 
+// Particle class for background effects
+class Particle {
+  constructor() {
+    this.reset(true);
+  }
+
+  reset(initial = false) {
+    this.x = initial ? Math.random() * canvas.width : -MAX_RADIUS;
+    this.y = Math.random() * canvas.height;
+    this.radius = Math.random() * MAX_RADIUS;
+    this.vx = (Math.random() * 2) + (analyser ? dataArray[10]/50 : 1);
+    this.vy = (Math.random() - 0.5) * 0.5;
+    this.color = COLOR_PALETTE[Math.floor(Math.random() * COLOR_PALETTE.length)];
+    this.alpha = Math.random() * 0.5 + 0.3;
+    this.life = 1;
+  }
+
+  update() {
+    if (this.life > 0) {
+      this.x += this.vx;
+      this.y += this.vy;
+      this.life -= 0.002;
+      
+      if (this.x > canvas.width + MAX_RADIUS) this.reset();
+    }
+  }
+
+  draw() {
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.radius * this.life, 0, Math.PI * 2);
+    const gradient = ctx.createRadialGradient(
+      this.x, this.y, 0, 
+      this.x, this.y, this.radius * this.life
+    );
+    gradient.addColorStop(0, `${this.color}${Math.floor(this.alpha * 255).toString(16)}`);
+    gradient.addColorStop(1, `${this.color}00`);
+    ctx.fillStyle = gradient;
+    ctx.fill();
+  }
+}
+
+// Initialize particles
+for (let i = 0; i < PARTICLE_COUNT; i++) {
+  particles.push(new Particle());
+}
+
+// Dynamic Gradient Background
+function createGradient() {
+  const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+  gradient.addColorStop(0, '#001119');
+  gradient.addColorStop(1, '#000a0f');
+  return gradient;
+}
+
+// Enhanced Audio Visualization
 function visualizePitch() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = createGradient();
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   analyser.getByteFrequencyData(dataArray);
   const centerX = canvas.width / 2;
   const centerY = canvas.height / 2;
-  const radius = 80;
 
-  // Draw circular pitch graph
+  // Main frequency circle
+  ctx.beginPath();
+  ctx.arc(centerX, centerY, 80 + (dataArray[20]/2), 0, Math.PI * 2);
+  const gradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, 200);
+  gradient.addColorStop(0, 'rgba(0, 255, 255, 0.4)');
+  gradient.addColorStop(1, 'rgba(0, 255, 255, 0)');
+  ctx.fillStyle = gradient;
+  ctx.fill();
+
+  // Frequency bars
+  const barWidth = canvas.width / bufferLength;
+  ctx.save();
+  ctx.translate(0, canvas.height / 2);
   for (let i = 0; i < bufferLength; i++) {
-    const angle = (i / bufferLength) * Math.PI * 2;
-    const x = centerX + Math.cos(angle) * (radius + dataArray[i] / 4);
-    const y = centerY + Math.sin(angle) * (radius + dataArray[i] / 4);
-
-    ctx.beginPath();
-    ctx.arc(x, y, 2, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(${dataArray[i]}, ${255 - dataArray[i]}, 255, 0.8)`;
-    ctx.fill();
+    const barHeight = dataArray[i] * 2;
+    const gradient = ctx.createLinearGradient(i * barWidth, 0, i * barWidth, barHeight);
+    gradient.addColorStop(0, `hsl(${(i * 360)/bufferLength}, 100%, 50%)`);
+    gradient.addColorStop(1, `hsl(${(i * 360)/bufferLength}, 100%, 20%)`);
+    
+    ctx.fillStyle = gradient;
+    ctx.fillRect(i * barWidth, -barHeight/2, barWidth-2, barHeight);
   }
+  ctx.restore();
+
+  // Particle system
+  particles.forEach(p => {
+    p.vx = (Math.random() * 2) + (dataArray[10]/50);
+    p.update();
+    p.draw();
+  });
+
+  // Rotating geometric shapes
+  ctx.save();
+  ctx.translate(centerX, centerY);
+  ctx.rotate(Date.now() * 0.0005);
+  ctx.strokeStyle = `rgba(0, 255, 255, ${dataArray[30]/255})`;
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  for (let i = 0; i < 6; i++) {
+    const angle = (i * Math.PI) / 3;
+    const x = Math.cos(angle) * (80 + dataArray[i*4]);
+    const y = Math.sin(angle) * (80 + dataArray[i*4]);
+    ctx.lineTo(x, y);
+  }
+  ctx.closePath();
+  ctx.stroke();
+  ctx.restore();
 
   requestAnimationFrame(visualizePitch);
 }
 
-// Activate visualization when recording
+// Enhanced Toggle Listening with Visual Feedback
 function toggleListening() {
   if (micWrapper.classList.contains("listening")) {
     recognition.stop();
-    speak("Stopped listening.");
+    speak("Standing by");
     audioCtx.suspend();
+    wave1.style.opacity = wave2.style.opacity = "0";
   } else {
     listenBtn.innerHTML = "🛑";
     recognition.start();
     audioCtx.resume();
+    wave1.style.opacity = wave2.style.opacity = "1";
 
-    // Connect microphone to analyzer
     navigator.mediaDevices.getUserMedia({ audio: true })
       .then((stream) => {
         const source = audioCtx.createMediaStreamSource(stream);
         source.connect(analyser);
         visualizePitch();
+        
+        // Add initial visual burst
+        particles.forEach(p => p.reset());
+        ctx.fillStyle = 'rgba(0, 255, 255, 0.2)';
+        ctx.beginPath();
+        ctx.arc(canvas.width/2, canvas.height/2, 100, 0, Math.PI * 2);
+        ctx.fill();
       });
   }
 }
 
-// Optional: Keyboard shortcut to toggle mic
-document.addEventListener("keydown", (e) => {
-  if (e.key === "m") toggleListening();
+// Handle window resize
+window.addEventListener('resize', () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  particles.forEach(p => p.reset(true));
 });
+
+// Initialize canvas size
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+// Start with subtle animation
+ctx.fillStyle = createGradient();
+ctx.fillRect(0, 0, canvas.width, canvas.height);
