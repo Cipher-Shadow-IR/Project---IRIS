@@ -1,5 +1,9 @@
 <p align="center">
-  <img src="https://readme-typing-svg.herokuapp.com?font=Orbitron&size=30&duration=4000&color=00F7FF&center=true&vCenter=true&width=800&height=70&lines=PROJECT+IRIS+%7C+Voice+AI+For+The+Web" alt="Typing SVG" />
+  <img src="assets/IRIS SS.jpg" width="600" alt="IR Window GUI Preview">
+</p>
+
+<p align="center">
+  <img src="https://readme-typing-svg.herokuapp.com?font=Cambria&size=30&duration=4000&color=00F7FF&center=true&vCenter=true&width=800&height=70&lines=PROJECT+IRIS+%7C+Voice+AI+For+The+Web" alt="Typing SVG" />
 </p>
 
 <h2 align="center">🤖 Your Personal Voice Assistant. In the Browser. Built from Code.</h2>
