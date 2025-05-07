@@ -74,25 +74,27 @@ function hideListeningState() {
 }
 
 // ---------------- Command Handler ----------------
-const commands = [
-  {
-    keywords: ["time", "what's the time", "tell me the time"],
-    action: () => {
-      const time = new Date().toLocaleTimeString();
-      speak("The time is " + time);
-    }
-  },
-  {
-    keywords: ["who are you", "what is your name", "introduce yourself"],
-    action: () => {
-      const introduction = "I am IRIS, your Personal Voice Assistant. How can I assist you today?";
-      speak(introduction);
-      output.textContent = "IRIS says: " + introduction;
-    }
-  }
-];
 
 function handleCommand(command) {
+  const commands = [
+    {
+      keywords: ["time", "what's the time", "tell me the time"],
+      action: () => {
+        const time = new Date().toLocaleTimeString();
+        speak("The time is " + time);
+      }
+    },
+    {
+      keywords: ["who are you", "what is your name", "introduce yourself"],
+      action: () => {
+        const introduction = "I am IRIS, your Personal Voice Assistant. How can I assist you today?";
+        speak(introduction);
+        output.textContent = "IRIS says: " + introduction;
+      }
+    }
+  ]; 
+  
+  
   const openWebsite = (url, speakMsg = "") => {
     if (speakMsg) speak(speakMsg);
     window.open(url, "_blank");
@@ -115,18 +117,18 @@ function handleCommand(command) {
     openWebsite("https://ir-infinitycompilerhub.netlify.app/", "Launching Infinity Compiler Hub.");
   } else if (command.startsWith("open ")) {
     const siteName = command.replace("open ", "").replace("website", "").trim();
-    if (!siteName.endsWith(".com")) {
-      const searchURL = `https://${siteName.replace(/\s+/g, "")}`;
-      openWebsite(searchURL, `Opening ${siteName}...`);
-    } else if (siteName.endsWith(".com")) {
-      const siteNameWithoutDot = siteName.replace(".com", "").replace(/\s+/g, "");
-      const searchURL = `https://${siteName}`;
-      openWebsite(searchURL, `Opening ${siteName}...`);
+    let searchURL;
+
+    if (!siteName.includes(".")) {
+      // If no domain is specified, assume ".com"
+      searchURL = `https://${siteName.replace(/\s+/g, "")}.com`;
     } else {
-      const searchURL = `https://www.google.com/search?q=${encodeURIComponent(siteName)}`;
-      openWebsite(searchURL, `Searching for ${siteName}...`);
+      // Use the provided domain
+      searchURL = `https://${siteName.replace(/\s+/g, "")}`;
     }
-  } else if (command.startsWith("search on youtube for ", "play")) {
+
+    openWebsite(searchURL, `Opening ${siteName}...`);
+  } else if (command.startsWith("search on youtube for ")) {
     const query = command.replace("search on youtube for ", "").trim();
     openWebsite(`https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`, `Searching YouTube for ${query}`);
   } else if (command.startsWith("search for ")) {
