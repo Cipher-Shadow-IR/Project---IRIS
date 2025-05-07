@@ -97,10 +97,7 @@ function handleCommand(command) {
     if (speakMsg) speak(speakMsg);
     window.open(url, "_blank");
   };
-
-  if (command.includes("youtube")) {
-    openWebsite("https://youtube.com", "Opening YouTube.");
-  } else if (command.includes("github")) {
+  if (command.includes("github")) {
     if (command.includes("profile")) {
       openWebsite("https://github.com/Cipher-Shadow-IR", "Opening your GitHub profile.");
     } else {
@@ -115,18 +112,45 @@ function handleCommand(command) {
     const time = now.toLocaleTimeString();
     speak("The time in your region is " + time);
   } else if (command.includes("compiler")) {
-    openWebsite("https://infinitycompilerhub.netlify.app/", "Launching Infinity Compiler Hub.");
+    openWebsite("https://ir-infinitycompilerhub.netlify.app/", "Launching Infinity Compiler Hub.");
   } else if (command.startsWith("open ")) {
     const siteName = command.replace("open ", "").replace("website", "").trim();
-    const searchURL = `https://${siteName.replace(/\s+/g, "")}.com`;
-    openWebsite(searchURL, `Opening ${siteName}...`);
-  } else if (command.startsWith("search on youtube for ")) {
+    if (!siteName.endsWith(".com")) {
+      const searchURL = `https://${siteName.replace(/\s+/g, "")}.com`;
+      openWebsite(searchURL, `Opening ${siteName}...`);
+    } else {
+      const searchURL = `https://${siteName}`;
+      openWebsite(searchURL, `Opening ${siteName}...`);
+    }
+  } else if (command.startsWith("search on youtube for ", "play")) {
     const query = command.replace("search on youtube for ", "").trim();
     openWebsite(`https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`, `Searching YouTube for ${query}`);
   } else if (command.startsWith("search for ")) {
     const query = command.replace("search for ", "").trim();
     openWebsite(`https://www.google.com/search?q=${encodeURIComponent(query)}`, `Searching Google for ${query}`);
-  } else {
+  } else if (command.includes("weather")) {
+    const city = command.replace("weather in ", "").trim();
+    openWebsite(`https://www.google.com/search?q=weather+${encodeURIComponent(city)}`, `Fetching weather for ${city}`);
+  } else if (command.includes("news")) {
+    openWebsite("https://news.google.com", "Fetching the latest news.");
+  } else if (command.includes("joke")) {
+    fetchGPTResponse("Tell me a joke.");
+  } else if (command.includes("tell me about") || command.includes("who is") || command.includes("what is")) {
+    const query = command.replace(/tell me about |who is |what is /, "").trim();
+    fetchGPTResponse(query);
+  } else if (command.includes("stop listening")) {
+    recognition.stop();
+    wakeRecognition.start();
+  } else if (command.includes("thank you") || command.includes("thanks")) {
+    speak("You're welcome! If you need anything else, just ask.");
+  } else if (command.includes("goodbye") || command.includes("bye")) {
+    speak("Goodbye! Have a great day!");
+    output.textContent = "IRIS says: Goodbye! Have a great day!";
+    recognition.stop();
+    wakeRecognition.stop();
+  }
+  
+  else {
     speak("Hmm... I didn't get that, but let me think...");
     fetchGPTResponse(command);
   }
