@@ -2,22 +2,16 @@
 <html>
 <head>
   <title>I  R  I  S</title>
-  <link rel="stylesheet" href = 'styles/main.css'/>
+  <link rel="stylesheet" href="styles/main.css" />
 </head>
 <body>
-  <h1>I  R  I  S</h1>
-  <h2> Your Personal Voice-Assistant </h2>
-
-  <div class="mic-wrapper" id="micWrapper">
-    <button id="listenBtn" onclick="toggleListening()">
-      🎤
-    </button>
+  <div class="iris-container">
+    <div id="irisText" class="iris-text">I R I S</div>
+    <div id="listeningBall" class="listening-ball hidden"></div>
   </div>
-  
   <div id="speechBox">
-  <p id="output">🎙️ Say something...</p>
-
-
-<script src="scripts/main.js"></script>
+    <p id="output">🎙️ Say something...</p>
+  </div>
+  <script src="scripts/main.js"></script>
 </body>
 </html>
