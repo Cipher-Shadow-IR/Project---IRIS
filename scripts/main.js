@@ -116,11 +116,15 @@ function handleCommand(command) {
   } else if (command.startsWith("open ")) {
     const siteName = command.replace("open ", "").replace("website", "").trim();
     if (!siteName.endsWith(".com")) {
-      const searchURL = `https://${siteName.replace(/\s+/g, "")}.com`;
+      const searchURL = `https://${siteName.replace(/\s+/g, "")}`;
       openWebsite(searchURL, `Opening ${siteName}...`);
-    } else {
+    } else if (siteName.endsWith(".com")) {
+      const siteNameWithoutDot = siteName.replace(".com", "").replace(/\s+/g, "");
       const searchURL = `https://${siteName}`;
       openWebsite(searchURL, `Opening ${siteName}...`);
+    } else {
+      const searchURL = `https://www.google.com/search?q=${encodeURIComponent(siteName)}`;
+      openWebsite(searchURL, `Searching for ${siteName}...`);
     }
   } else if (command.startsWith("search on youtube for ", "play")) {
     const query = command.replace("search on youtube for ", "").trim();
