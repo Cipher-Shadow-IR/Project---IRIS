@@ -110,12 +110,14 @@ function speak(message) {
 
 async function fetchGPTResponse(prompt) {
   try {
-    const response = await fetch("https://iris-ai-backend.ciphershadow197.repl.co/ask", {
+    const response = await fetch("https://iris-backend.onrender.com/ask", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify({ message: prompt })
     });
-
+    
     if (!response.ok) throw new Error("Failed to fetch GPT response");
 
     const data = await response.json();
