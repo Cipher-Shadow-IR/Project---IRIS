@@ -93,11 +93,41 @@ const commands = [
 ];
 
 function handleCommand(command) {
-  const matched = commands.find(c => c.keywords.some(k => command.includes(k)));
-  if (matched) {
-    matched.action();
+  const openWebsite = (url, speakMsg = "") => {
+    if (speakMsg) speak(speakMsg);
+    window.open(url, "_blank");
+  };
+
+  if (command.includes("youtube")) {
+    openWebsite("https://youtube.com", "Opening YouTube.");
+  } else if (command.includes("github")) {
+    if (command.includes("profile")) {
+      openWebsite("https://github.com/Cipher-Shadow-IR", "Opening your GitHub profile.");
+    } else {
+      openWebsite("https://github.com", "Opening GitHub.");
+    }
+  } else if (command.includes("mail")) {
+    openWebsite("https://mail.google.com/mail/", "Opening Gmail inbox.");
+  } else if (command.includes("notepad") || command.includes("note")) {
+    openWebsite("https://www.rapidtables.com/tools/notepad.html", "Opening online notepad.");
+  } else if (command.includes("time")) {
+    const now = new Date();
+    const time = now.toLocaleTimeString();
+    speak("The time in your region is " + time);
+  } else if (command.includes("compiler")) {
+    openWebsite("https://infinitycompilerhub.netlify.app/", "Launching Infinity Compiler Hub.");
+  } else if (command.startsWith("open ")) {
+    const siteName = command.replace("open ", "").replace("website", "").trim();
+    const searchURL = `https://${siteName.replace(/\s+/g, "")}.com`;
+    openWebsite(searchURL, `Opening ${siteName}...`);
+  } else if (command.startsWith("search on youtube for ")) {
+    const query = command.replace("search on youtube for ", "").trim();
+    openWebsite(`https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`, `Searching YouTube for ${query}`);
+  } else if (command.startsWith("search for ")) {
+    const query = command.replace("search for ", "").trim();
+    openWebsite(`https://www.google.com/search?q=${encodeURIComponent(query)}`, `Searching Google for ${query}`);
   } else {
-    speak("Let me think...");
+    speak("Hmm... I didn't get that, but let me think...");
     fetchGPTResponse(command);
   }
 }
