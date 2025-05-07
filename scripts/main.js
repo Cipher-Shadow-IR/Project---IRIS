@@ -76,25 +76,19 @@ function hideListeningState() {
 // ---------------- Command Handler ----------------
 
 function handleCommand(command) {
-  const commands = [
-    {
-      keywords: ["time", "what's the time", "tell me the time"],
-      action: () => {
-        const time = new Date().toLocaleTimeString();
-        speak("The time is " + time);
-      }
-    },
-    {
-      keywords: ["who are you", "what is your name", "introduce yourself"],
-      action: () => {
-        const introduction = "I am IRIS, your Personal Voice Assistant. How can I assist you today?";
-        speak(introduction);
-        output.textContent = "IRIS says: " + introduction;
-      }
-    }
-  ]; 
-  
-  
+  if (command.includes("time")) {
+    const time = new Date().toLocaleTimeString();
+    speak("The time is " + time);
+    output.textContent = "IRIS says: The time is " + time;
+  } else if (command.includes("who are you", "what is your name", "introduce yourself")) {
+    const introduction = "I am IRIS, your Personal Voice Assistant. How can I assist you today?";
+    speak(introduction);
+    output.textContent = "IRIS says: " + introduction;
+  } else if (command.includes("how are you", "how's it going")) {
+    const response = "I'm just a personal assistant, but I'm here to help you! How can I assist you today?";
+    speak(response);
+    output.textContent = "IRIS says: " + response;
+  }  
   const openWebsite = (url, speakMsg = "") => {
     if (speakMsg) speak(speakMsg);
     window.open(url, "_blank");
